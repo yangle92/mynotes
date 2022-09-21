@@ -1,0 +1,128 @@
+nd, and server-generated directory index forbidden by Options directive
+[Sat Apr 09 18:28:48.365802 2022] [php:error] [pid 50405]
+ [client 192.168.3.2:58675] PHP Fatal error:  Uncaught Error: Call to undefined function mysql_connect() in 
+ /local/www/wordpress/wp-includes/wp-db.php:1788\nStack trace:\n#0 /local/www/wordpress/wp-admin/setup-config.php(307)
+ : wpdb->db_connect()\n#1 {main}\n  thrown in /local/www/wordpress/wp-includes/wp-db.php on line 1788, 
+referer: http://192.168.3.49:8080/wp-admin/setup-config.php?step=1&language=zh_CN
+
+
+<?php
+// 1.链接我们的数据库
+$link = mysqli_connect('127.0.0.1', 'root', 'Qwert!2345', 'mysql');
+// 2.设置中文编码
+mysqli_query($link,"set names 'utf8';");
+// 3.检测链接
+if ($link->connect_error) {
+    die("连接失败: " . $link->connect_error);
+}
+// 4.查询数据
+$query = mysqli_query($link, 'select * from user;');
+// 5.渲染数据
+?>
+
+
+<?php
+/**
+ * The base configuration for WordPress
+ *
+ * The wp-config.php creation script uses this file during the installation.
+ * You don't have to use the web site, you can copy this file to "wp-config.php"
+ * and fill in the values.
+ *
+ * This file contains the following configurations:
+ *
+ * * Database settings
+ * * Secret keys
+ * * Database table prefix
+ * * ABSPATH
+ *
+ * @link https://wordpress.org/support/article/editing-wp-config-php/
+ *
+ * @package WordPress
+ */
+
+// ** Database settings - You can get this info from your web host ** //
+/** The name of the database for WordPress */
+define( 'DB_NAME', 'wordpress' );
+
+/** Database username */
+define( 'DB_USER', 'root' );
+
+/** Database password */
+define( 'DB_PASSWORD', 'Qwert!2345' );
+
+/** Database hostname */
+define( 'DB_HOST', '192.168.3.49' );
+
+/** Database charset to use in creating database tables. */
+define( 'DB_CHARSET', 'utf8mb4' );
+
+/** The database collate type. Don't change this if in doubt. */
+define( 'DB_COLLATE', '' );
+
+/**#@+
+ * Authentication unique keys and salts.
+ *
+ * Change these to different unique phrases! You can generate these using
+ * the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}.
+ *
+ * You can change these at any point in time to invalidate all existing cookies.
+ * This will force all users to have to log in again.
+ *
+ * @since 2.6.0
+ */
+define( 'AUTH_KEY',         '0.Y;WJ3JFgsT?l&6We#erpg z~t7s864H|tPB%DM/o#k+Vu>rAgrQJW_v;r;%fpf' );
+define( 'SECURE_AUTH_KEY',  'O$Ap9[9v8@W<T#%a4@`tt`G{F(Od<MS+8{|07`De|M;%p!?((CZJwl2`yg^^Y0)?' );
+define( 'LOGGED_IN_KEY',    'In~H [mCw*9WG8MDl7!V~SuN788Bt87p+T(ZMaWSAaZqG[Ik@SCD1kBrKGJq9~C`' );
+define( 'NONCE_KEY',        '`Wta4PF8:UT?O;I[Hi>Rav-04x!oZkIV(=5AMEkS@ou6,B M(?{`DLMyds+~}ms]' );
+define( 'AUTH_SALT',        'h=9KJ$c$|$:A!LK3z^#[m/6{TBEU/D3FX25I5V:sY)5|C[<4<p|/rT2$QU{Uzr*@' );
+define( 'SECURE_AUTH_SALT', 'zOPhRi:b#~b%93:WzCkwuQ/6K`E*X=L{]ux1_dV[>E.ZNbY]WN/7T|sfIw=*nvtq' );
+define( 'LOGGED_IN_SALT',   ':cz1Yx>9[%4mB+~8oV&jDZWM{GD}),l++mXp|e$IjbXOh*!o=y:O1%tt(?0(^:_i' );
+define( 'NONCE_SALT',       ',C;$s:14YQiv2nPcMGWb}Xsf.?S$hS1A9.SY?:~C)bx7=(9kQ@X`v{fWVrhlJc:A' );
+
+/**#@-*/
+
+/**
+ * WordPress database table prefix.
+ *
+ * You can have multiple installations in one database if you give each
+ * a unique prefix. Only numbers, letters, and underscores please!
+ */
+$table_prefix = 'wp_t1';
+
+/**
+ * For developers: WordPress debugging mode.
+ *
+ * Change this to true to enable the display of notices during development.
+ * It is strongly recommended that plugin and theme developers use WP_DEBUG
+ * in their development environments.
+ *
+ * For information on other constants that can be used for debugging,
+ * visit the documentation.
+ *
+ * @link https://wordpress.org/support/article/debugging-in-wordpress/
+ */
+define( 'WP_DEBUG', false );
+
+/* Add any custom values between this line and the "stop editing" line. */
+
+
+
+/* That's all, stop editing! Happy publishing. */
+
+/** Absolute path to the WordPress directory. */
+if ( ! defined( 'ABSPATH' ) ) {
+	define( 'ABSPATH', __DIR__ . '/' );
+}
+
+/** Sets up WordPress vars and included files. */
+require_once ABSPATH . 'wp-settings.php';
+
+
+./configure -prefix=/usr/local/zlib
+
+https://blog.csdn.net/h330531987/article/details/70881730
+https://blog.csdn.net/weixin_33733810/article/details/94650283?spm=1035.2023.3001.6557&utm_medium=distribute.pc_relevant_bbs_down_v2.none-task-blog-2~default~OPENSEARCH~Rate-1.pc_relevant_bbs_down_v2_default&depth_1-utm_source=distribute.pc_relevant_bbs_down_v2.none-task-blog-2~default~OPENSEARCH~Rate-1.pc_relevant_bbs_down_v2_default
+
+
+

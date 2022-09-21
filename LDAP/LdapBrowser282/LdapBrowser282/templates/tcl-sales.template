@@ -1,0 +1,16 @@
+# name : tcl-sales
+#
+# objectClass : top
+# objectClass : organizationalUnit
+# objectClass : tcl-department
+#
+
+PREFIX: ou
+
+REQUIRED ATTRIBUTES
+
+OPTIONAL ATTRIBUTES
+departmentnumber
+ou
+uniqueidentifier
+cn

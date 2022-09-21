@@ -1,0 +1,76 @@
+NFS搭建
+
+#######服务端############
+
+yum install lrzsz nmap tree dos2unix nc -y #安装常用到的软件
+yum install nfs-utils rpcbind #安装NFS
+systemctl start rpcbind.service  #启用rpcbind服务
+systemctl enable rpcbind.service #设置开机启动
+systemctl enable nfs.service
+rpcinfo -p localhost #查看rpcinfo服务信息
+		[root@sysadmin ~]# rpcinfo -p localhost
+						   program vers proto   port  service
+						    100000    4   tcp    111  portmapper
+						    100000    3   tcp    111  portmapper
+						    100000    2   tcp    111  portmapper
+						    100000    4   udp    111  portmapper
+						    100000    3   udp    111  portmapper
+						    100000    2   udp    111  portmapper
+
+service nsf start #启动NFS服务
+chown -R nfsnobody.nfsnobody /root/data/   #更改目录属主 
+vi /etc/exports  #设置允许接入的网址和目录（vim /etc/exports）
+		[root@sysadmin ~]# cat /etc/exports
+						/root/data 192.168.3.0/24(rw,sync)
+
+#检查rpcbind服务和nfs服务是否启动
+service rpcbind status
+service rpcbind restart
+service nfs restart
+rpcinfo -p localhost
+service nfs reload
+
+#查询共享是否成功
+showmount -e 127.0.0.1
+
+
+#######客户端############
+yum -y install nfs-utils rpcbind
+service rpcbind restart
+chkconfig rpcbind on
+service rpcbind restart
+
+
+mkdir -p /sysadmin/manager
+mount -t nfs 192.168.3.50:/root/data /sysadmin/manager
+
+fsinfo = `cat /etc/fstab  | grep "/sysadmin/manager"`
+if [ -z $fsinfo ] ; then echo "192.168.3.50:/root/data  /sysadmin/manager nfs defaults 0 0 " >> /etc/fstab;fi 
+
+
+
+
+#################Shell 配置NFS客户端######################
+#/bin/bash
+
+timeout -s 9 3  showmount -e 192.168.3.50
+
+
+if [ $?! = 0 ];then
+				yum -y install nfs-utils rpcbind 
+				service rpcbind restart 
+				chkconfig rpcbind on 
+				service rpcbind restart 
+				mkdir -p /sysadmin/manager 
+				mount -t nfs 192.168.3.50:/root/data /sysadmin/manager 
+				 
+				fsinfo = `cat /etc/fstab  | grep "/sysadmin/manager"` 
+				if [ -z $fsinfo ] ; then echo "192.168.3.50:/root/data  /sysadmin/manager nfs defaults 0 0 " >> /etc/fstab;fi
+else
+
+	echo "NFS Client is ok !"
+ 
+fi
+ 
+
+                                                   

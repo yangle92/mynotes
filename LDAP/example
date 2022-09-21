@@ -1,0 +1,23 @@
+
+
+# create new
+# replace to your own domain name for "dc=***,dc=***" section
+dn: uid=kerry,ou=People,dc=test,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+uid: kerry
+cn: kerry
+sn: test
+userPassword: {SSHA}32S2uLFahPZMqMzVYhT8fOKOp8RzremG
+loginShell: /bin/bash
+uidNumber: 2000
+gidNumber: 3000
+homeDirectory: /home/testldap
+
+#这是添加一个用户组名为testgroup的cn，在名为Group的ou下
+dn: cn=testgroup,ou=Group,dc=hdp,dc=node3,dc=com
+objectClass: posixGroup
+cn: testgroup
+gidNumber: 3000
+memberUid: testldap
