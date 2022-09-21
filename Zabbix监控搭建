@@ -1,0 +1,141 @@
+#########################服务端搭建##########################
+关闭防火墙和selinux
+setenforce 0
+systemc   stop firewalld
+
+安装elel包
+ yum -y install epel-release
+
+配置yum源
+echo  "\
+[zabbix]
+name=Zabbix Official Repository - \$basearch
+baseurl=https://mirrors.aliyun.com/zabbix/zabbix/5.0/rhel/7/\$basearch/
+enabled=1 
+gpgcheck=0 " >/etc/yum.repos.d/zabbix.repo
+
+
+安装zabbix-server-mysql 和 zabbix-agent
+yum install -y zabbix-server-mysql zabbix-agent
+
+
+安装CentOS扩展软件库
+yum install -y centos-release-scl
+
+
+配置zabbix frontend（前端）源
+
+echo "\
+[zabbix-frontend]
+name=Zabbix Official Repository frontend - \$basearch
+baseurl=https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/5.0/rhel/7/\$basearch/frontend/
+enabled=1
+gpgcheck=0" >> /etc/yum.repos.d/zabbix.repo
+
+
+安装数据库初始化文件和apache
+yum install -y zabbix-web-mysql-scl zabbix-apache-conf-scl
+
+
+安装数据库
+yum -y install mariadb-server mariadb
+
+systemctl start mariadb #启动数据库
+systemctl enable mariadb #设置数据库开机启动
+mysql_secure_installation #数据库初始化
+回车
+设置数据库root密码 回车
+再输入一遍密码  回车
+  回车
+n 回车
+  回车
+
+创建数据库用户，并给数据库用户授予权限。
+mysql -uroot -proot   #登陆mysql -u用户名 -p密码
+create database zabbix character set utf8 collate utf8_bin;   #设置utf编码以便支持中文数据
+create user zabbix@localhost identified by 'zabbix';             #创建zabbix用户， by'密码'
+grant all privileges on zabbix.* to zabbix@localhost;            #授权zabbix用户登陆范围 @localhost 本地
+quit   #退出
+
+
+初始化数据库
+zcat /usr/share/doc/zabbix-server-mysql*/create.sql.gz | mysql -uzabbix -p zabbix
+#执行后输入zabbix（mysql的zabbix用户密码）然后回车
+到这可能会卡一下，请耐心等待
+
+
+配置zabbix服务的数据库
+
+# vi /etc/zabbix/zabbix_server.conf
+DBHost=localhost
+DBName=zabbix
+DBUser=zabbix
+DBPassword=zabbix
+
+修改配置文件
+vi /etc/opt/rh/rh-php72/php-fpm.d/zabbix.conf  #将PHP时区修改为Asia/Shanghai
+php_value[date.timezone] = Asia/Shanghai
+
+启动zabbix和agent服务，设置为开机自启
+systemctl restart zabbix-server zabbix-agent httpd rh-php72-php-fpm
+systemctl enable zabbix-server zabbix-agent httpd rh-php72-php-fpm
+
+登陆web界面
+http://server_ip_or_name/zabbix
+
+
+
+#############客户端安装配置文件##########################
+安装elel包
+ yum -y install epel-release
+
+配置yum源
+echo  "\
+[zabbix]
+name=Zabbix Official Repository - \$basearch
+baseurl=https://mirrors.aliyun.com/zabbix/zabbix/5.0/rhel/7/\$basearch/
+enabled=1 
+gpgcheck=0 " >/etc/yum.repos.d/zabbix.repo
+
+
+安装zabbix-agent
+yum install zabbix-agent
+
+
+vi /etc/zabbix/zabbix_agentd.conf
+
+cat /etc/zabbix/zabbix_agentd.conf  | grep -v "^#" | grep -v ^$
+
+PidFile=/var/run/zabbix/zabbix_agentd.pid
+LogFile=/var/log/zabbix/zabbix_agentd.log
+LogFileSize=0
+Server=192.168.3.101    #填写zabbix服务器IP地址
+ServerActive=192.168.3.101    #填写zabbix服务器IP地址
+Hostname=host100   #填写zabbix_agentd客户端计算机名  （被监控端）
+Include=/etc/zabbix/zabbix_agentd.d/*.conf
+service zabbix-agent restart
+
+
+
+
+FAQ
+
+服务端安装报错，10051端口起不来 cannot start LLD manager service: Cannot bind socket to "/var/run/zabbix/zabbix_server_lld.sock": [13] Permission denied.
+https://blog.csdn.net/wsyzxss/article/details/115762766
+
+zabbix_agentd.log里面有出现host [] not found错误的解决   
+https://www.cnblogs.com/zhugq02/p/12357072.html
+
+debug 参考日志
+netstat -tunlp  log检查端口监听状态，agent端是10050，service端默认是10051
+ tail -f  /var/log/zabbix/zabbix_agentd. 查看日志
+
+
+参考 
+[经验]ZABBIX 5.0 快速安装教程 https://developer.huaweicloud.com/hero/thread-68878-1-1.html
+Zabbix 3.0 从入门到精通(zabbix使用详解)  
+https://www.cnblogs.com/clsn/p/7885990.html
+
+
+
+

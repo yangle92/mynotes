@@ -1,0 +1,183 @@
+https://www.cnblogs.com/ccbloom/p/14100244.html
+
+
+
+
+
+
+
+
+
+
+dn: dc=test,dc=com
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: test Company
+dc: test
+
+dn: cn=admin,dc=test,dc=com
+objectClass: organizationalRole
+cn: admin
+
+dn: ou=People,dc=test,dc=com
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Group,dc=test,dc=com
+objectClass: organizationalUnit
+ou: Group
+
+ldapadd -x -D 'cn=admin,dc=test,dc=com' -W -f organization.ldif
+
+
+添加user01
+
+slappasswd -s 123456
+
+dn: uid=y00268871,ou=People,dc=test,dc=com
+objectClass: inetOrgPerson
+objectClass: posixAccount
+objectClass: shadowAccount
+homeDirectory: /home/y00268871
+userPassword: {SSHA}Xu+RdtoWvHOgjJMmPNGz629778dBa2k4
+loginShell: /bin/bash
+cn: y00268871
+uidNumber: 1000
+gidNumber: 1010
+sn: System Administrator
+
+
+[root@sysadmin openldap]# ldapadd -x -D 'cn=admin,dc=test,dc=com' -W -f organization.ldif
+Enter LDAP Password: 
+adding new entry "dc=test,dc=com"
+
+adding new entry "cn=admin,dc=test,dc=com"
+
+adding new entry "ou=People,dc=test,dc=com"
+
+adding new entry "ou=Group,dc=test,dc=com"
+
+ldapsearch -LL -Y EXTERNAL -H ldapi:///  -b dc=test,dc=com
+
+
+
+$servers = new Datastore();
+$servers->newServer('ldap_pla');
+$servers->setValue('server','name','My LDAP Server');
+$servers->setValue('server','host','127.0.0.1');
+$servers->setValue('server','port',389);
+$servers->setValue('server','base',array('dc=test,dc=com')); #修改 dc=xxx,dc=xxx 为自己的域名
+$servers->setValue('login','auth_type','session');
+$servers->setValue('login','bind_id','cn=admin,dc=test,dc=com');   #修改 dc=xxx,dc=xxx 为自己的域名
+$servers->setValue('login','bind_pass','123456'); #填入 5.7.1 设定的根节点管理员密码
+$servers->setValue('server','tls',false); 
+
+
+# vim /etc/nslcd.conf
+uid nslcd
+gid ldap
+uri ldap://192.168.3.50:389
+# ldap目录树的基准
+base dc=test,dc=com
+# ldap的管理域
+binddn cn=admin,dc=node3,dc=com
+# ldap管理者密码
+bindpw 123456
+ssl no
+tls_cacertdir /etc/openldap/cacerts
+
+# vim /etc/sssd/sssd.conf
+[domain/default]
+autofs_provider = ldap
+ldap_schema = rfc2307bis
+krb5_realm = REDPEAK.COM
+ldap_search_base = dc=test,dc=com
+krb5_server = 192.168.3.50
+id_provider = ldap 
+auth_provider = ldap
+chpass_provider = ldap
+ldap_uri = ldap://192.168.3.50:389
+ldap_id_use_start_tls = False
+cache_credentials = True
+ldap_tls_cacertdir = /etc/openldap/cacerts
+[sssd]
+services = nss, pam, autofs
+domains = default
+[nss]
+homedir_substring = /home
+[pam]
+[sudo]
+[autofs]
+[ssh]
+[pac]
+[ifp]
+[secrets]
+
+
+ systemctl start sssd
+ systemctl enable sssd
+systemctl status sssd
+
+
+ ldappasswd -x -H ldap://192.168.3.50:389 -D "cn=admin,dc=test,dc=com" -W "123456" "uid=y00268871,ou=People,dc=test,dc=com" -s "12345"
+ 
+ 
+ # vim /etc/pam.d/password-auth
+#%PAM-1.0
+# This file is auto-generated.
+# User changes will be destroyed the next time authconfig is run.
+auth        required      pam_env.so
+auth        required      pam_faildelay.so delay=2000000
+auth        [default=1 ignore=ignore success=ok] pam_succeed_if.so uid >= 1000 quiet
+auth        [default=1 ignore=ignore success=ok] pam_localuser.so
+auth        sufficient    pam_unix.so nullok try_first_pass
+auth        requisite     pam_succeed_if.so uid >= 1000 quiet_success
+#auth        sufficient    pam_sss.so forward_pass
+auth        sufficient    pam_ldap.so forward_pass
+auth        required      pam_deny.so
+
+account     required      pam_unix.so broken_shadow
+account     sufficient    pam_localuser.so
+account     sufficient    pam_succeed_if.so uid < 1000 quiet
+#account     [default=bad success=ok user_unknown=ignore] pam_sss.so
+account     [default=bad success=ok user_unknown=ignore] pam_ldap.so
+
+account     required      pam_permit.so
+
+password    requisite     pam_pwquality.so try_first_pass local_users_only retry=3 authtok_type=
+password    sufficient    pam_unix.so sha512 shadow nullok try_first_pass use_authtok
+#password    sufficient    pam_sss.so use_authtok
+password    sufficient    pam_ldap.so use_authtok
+
+password    required      pam_deny.so
+
+session     optional      pam_keyinit.so revoke
+session     required      pam_limits.so
+-session     optional      pam_systemd.so
+session     optional      pam_mkhomedir.so umask=0077
+session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid
+session     required      pam_unix.so
+#session     optional      pam_sss.so
+session     optional      pam_ldap.so
+
+
+dn: cn=osadmin,ou=Group,dc=test,dc=com
+objectClass: posixGroup
+cn: testgroup
+gidNumber: 1000
+memberUid: osadmin
+
+scp -r host100:/etc/nslcd.conf /etc/
+scp -r host100:/etc/nsswitch.conf  /etc/
+scp -r host100:/etc/sssd/sssd.conf /etc/sssd
+scp -r host100:/etc/ssh/sshd_config  /etc/ssh
+scp -r host100:/etc/pam.d/sshd  /etc/pam.d/ 
+scp -r host100:/etc/pam.d/password-auth /etc/pam.d/
+scp -r host100:/etc/pam.d/system-auth /etc/pam.d/ 
+
+systemctl restart sshd
+systemctl restart sssd
+systemctl restart nslcd
+
+

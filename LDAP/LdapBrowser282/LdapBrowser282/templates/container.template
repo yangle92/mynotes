@@ -1,0 +1,12 @@
+# name : container
+#
+# objectClass : container
+# objectClass : top
+#
+
+PREFIX: cn
+
+REQUIRED ATTRIBUTES
+
+OPTIONAL ATTRIBUTES
+cn

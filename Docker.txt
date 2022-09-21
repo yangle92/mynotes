@@ -1,0 +1,345 @@
+
+#####################Docker安装############################################
+wget  http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+ yum install docker-ce docker-ce-cli containerd.io
+ sudo systemctl start docker
+
+docker login --username=821428991@qq.com registry.cn-hangzhou.aliyuncs.com
+password: docker123
+ 
+#####Docker 镜像加速
+[root@host201 docker]# pwd
+/etc/docker
+[root@host201 docker]# cat daemon.json 
+{"registry-mirrors":["https://reg-mirror.qiniu.com/"]}
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+
+		 Registry Mirrors:
+		  https://reg-mirror.qiniu.com/
+		 Live Restore Enabled: false
+
+
+#####Docker中关于镜像的基本操作
+
+###Docker 三部曲####
+	#Build
+	#ship
+	#Run
+
+[root@host201 ~]# docker search centos 
+  216  docker search centos
+  217  docker pull ansible/centos7-ansible
+  218  docker images
+  219  docker run -it ansible/centos7-ansible /bin/bash
+  220  docker ps -a
+  
+  
+  ###启动容器
+  315  docker start 9473140c024f 
+  316  docker ps -a
+  317  docker exec -it 9473140c024f /bin/bash
+
+###Dockerfile
+[root@host201 ~]# vi Dockerfile
+[root@host201 ~]# docker build -t test/centos7   .
+#-t ：指定要创建的目标镜像名
+#. ：Dockerfile 文件所在目录，可以指定Dockerfile 的绝对路径
+
+####共享母机的 /sysadmin/manager/ 文件到docker的/mnt/webapp 上
+docker run -d -it --name web -v /sysadmin/manager/:/mnt/webapp  ansible/centos7-ansible
+
+
+
+
+####使用 Dockerfile 定制镜像
+FROM 指定基础镜像
+RUN 执行命令（shell 格式和exec 格式两种）
+
+
+
+# #######################Docker########################
+
+image：只读的模板
+容器： 镜像创建的运行实例
+仓库： registry  集中存放镜像文件的场所， docker hub
+
+docker 
+资源控制和资源隔离的技术
+
+资源隔离 （namespace）
+	namespace 	 fork_argument 	 isloated_content 
+	UTS 			CLONE_NEWUTS 	主机和域名
+	IPC				CLONE_NEWIPC	信号量，消息队列，共享内存
+	PID				CLONE_NEWPID	进程编号
+	NetWork			CLONE_NEWNET	网络设备，网络栈，端口等
+	Mount 			Clone_NEWNS		挂载点（文件系统）
+	USER			CLONE_NEWUSER	用户和用户组
+
+
+资源控制  （Cgroup）
+	资源限制，优先级分配，资源统计，任务控制
+	
+	子系统		功能
+	CPU 
+	cpuacct （CPU accounting）
+	devices
+	freezer
+	memory
+	perf_event
+	net_cls
+	
+	
+Docker为什么比VM快
+	1）共享宿主机的kernel。 
+	2) 少了一层Hypervisor 。 虚拟化的一层
+	
+
+docker images
+docker search redis
+docker pull 镜像名称[:TAG]
+	docker pull mysql:5.7
+docker system df
+docker rmi 镜像名称|镜像ID
+docker pull ubuntu
+docker run [OPTIONS] 镜像名称|镜像ID [COMMAND] [ARG...]
+	-i interactive 交互
+	-t  terminal 
+	-P 随机端口
+	-p 指定端口
+	
+	docker run -it --name=ubuntu ubuntu /bin/bash
+	
+docker ps [-qa]
+		exit ：run 进容器，exit 退出，容器停止
+		ctrl + p + q：run 进容器，ctrl + p + q 退出，容器不停止
+
+	docker pull bluedata/centos7
+
+	docker run -it  bluedata/centos7      /bin/bash
+	docker run -d 容器名
+	
+	docker inspect 容器名称|容器ID
+	
+docker stop 容器名称或容器ID
+
+
+docker exec -it 容器名称|容器ID [COMMAND]       #进入正在运行的容器并以命令行交互
+
+docker cp CONTAINER:SRC_PATH DEST_PATH|-
+
+
+docker export 容器ID|容器名称 > 文件名.tar
+docker import 文件名.tar 镜像名称:TAG|[用户名/镜像名称:TAG]
+
+
+docker commit -m="提交的描述信息" -a="作者" 容器ID 要创建的目标镜像名:TAG
+
+
+# 本地镜像发布到阿里云
+
+
+ docker run -it --privileged=true -v /宿主机绝对路径目录:/容器内目录 镜像名    
+	docker run -it --privileged=true -v /root:/mnt bluedata/centos7 
+	docker inspect ece5d5debb4a
+	docker exec  -it  ece5d5debb4a /bin/bash
+
+ docker run -it --privileged=true -v /宿主机绝对路径目录:/容器内目录:ro 镜像名
+ 不接参数 ro 容器内目录是读写（rw）
+ 
+ 
+ docker run -it  --privileged=true -v /var/tmp:/tmp --name u1 ubuntu
+ docker run -it  --privileged=true --volumes-from u1  --name u2 ubuntu  
+ #继承的仅仅是容器数据卷的映射规则，容器 1 和 容器 2 之间并没其他什么关系，容器 1 挂了不会影响到 容器 2 
+ 
+ 
+ docker volume ls
+ docker volume create xxx
+
+ 
+
+wget  http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+ yum install docker-ce docker-ce-cli containerd.io
+ sudo systemctl start docker
+
+
+
+# 容器与虚拟机的比较
+
+# 镜像 images   
+# 容器 container
+# 仓库	repository  :仓库（Repository）是 集中存放镜像 文件的场所。 
+
+
+docker info
+docker --help
+docker search redis
+docker pull 镜像名字：latest
+docker system df
+
+docker rmi -f 镜像ID
+docker rmi -f 镜像名1:TAG 镜像名2:TAG
+docker rmi -f $(docker images -qa)
+
+# 前台交互式启动
+docker run -it redis:6.0.8
+# 后台交互式启动
+docker run -d redis:6.0.8
+
+docker inspect 容器ID
+ 
+docker ps -a
+
+docker log cid
+
+docker exec -it 容器ID /bin/bash
+
+ 
+# 启动已停止运行的容器
+docker start 容器ID或者容器名
+# 重启容器
+docker restart 容器ID或者容器名
+# 停止容器
+docker stop 容器ID或者容器名
+# 强制停止容器
+docker kill 容器ID或容器名
+# 删除已停止的容器
+docker rm 容器ID
+# 一次性删除多个容器实例
+docker rm -rf $(docker ps -a -q)
+
+docker ps -a -q | xargs docker rm
+
+
+# Export 导出容器的内容留作为一个tar归档文件[对应import命令]
+# import 从tar 包中的内容创建一个新的文件系统在导入为镜像[对应export]
+docker export 7190073e4ef7 > abcd.tar
+cat abcd.tar  | docker import -user/redis_1:2.1  
+	#cat 文件名.tar  | docker  import - 镜像用户/镜像名:镜像版本号
+	
+	
+
+# 镜像
+docker commit -m  "Commit message"  -a "author string"   CONTAINER  [REPOSITORY[:TAG]]
+
+
+docker run -it -v /宿主机目录:/容器内目录
+docker run -it --name myu3 --privileged=true -v /tmp/myHostData:/tmp/myDockerData ubuntu /bin/bash 
+
+docker run -it --privileged=true -v /宿主机绝对路径目录:/容器内目录:rw  镜像名
+默认同上案例，默认就是rw
+rw= read + write
+ro= read only
+
+docker run -p 3307:3306 --name mysql-master \ 
+-v /mydata/mysql-master/log:/var/log/mysql \ 
+-v /mydata/mysql-master/data:/var/lib/mysql \ 
+-v /mydata/mysql-master/conf:/etc/mysql \ 
+-e MYSQL_ROOT_PASSWORD=root  \ 
+-d mysql:5.7 
+
+
+# DockerFile
+# DockerFile是用来构建Docker镜像的文本文件，是有一条条构建镜像所需的指令和参数构成的脚本。
+	From
+	MANINTAINER
+	Run
+	EXPOSE
+	WORKDIR
+	USER
+	ENV
+	ADD
+	COPY
+	VOLUME
+	CMD
+	ENTRYPOINT 
+	
+
+ vi Dokerfile
+	]# docker build -t centosjava8:1.5  ./
+	Sending build context to Docker daemon   2.56kB
+	
+# Docker 网络
+docker network ls
+
+			```
+			Usage:  docker network COMMAND
+
+			Manage networks
+
+			Commands:
+			  connect     Connect a container to a network
+			  create      Create a network
+			  disconnect  Disconnect a container from a network
+			  inspect     Display detailed information on one or more networks
+			  ls          List networks
+			  prune       Remove all unused networks
+			  rm          Remove one or more networks
+
+			Run 'docker network COMMAND --help' for more information on a command.
+			```
+			
+bridge模式：使用--network bridge指定，默认使用docker()
+host模式：使用 --network host指定
+none模式：使用 --network none指定
+container模式：使用 --network container:Name或者容器ID指定
+
+
+# Docker Portainer
+# 访问 9000 端口即可
+docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce
+
+
+docker run -d -p 9001:9001 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes portainer/agent
+
+
+# docker-compose
+
+yum install docker-compose.noarch
+docker-compose  
+
+服务(service):
+一个个应用容器实例，比如订单微服务、库存微服务、mysql容器、nginx容器或者redis容器。
+
+工程(project):
+由一组关联的应用容器组成的一个完整业务单元，在 docker-compose.yml 文件中定义。
+
+
+
+# 容器之间做关联交互
+
+–link可以通过容器名互相通信，容器间共享环境变量。
+–link主要用来解决两个容器通过ip地址连接时容器ip地址会变的问题.
+--link   （单向）
+
+
+# 跨宿主机之间的容器通信
+
+【教程】docker容器间跨宿主机通信-基于overlay
+ https://blog.csdn.net/mrliqifeng/article/details/113833523
+ 
+ 
+ # dokcer 仓库
+ 
+ ## 私有
+ 
+ docker pull registry
+ 
+ docker run -di  --name=registry -p 5000:5000 registry
+ 
+ http://192.168.3.49:5000/v2/_catalog
+ 
+ vi /etc/docker/daemon.json
+ , "insecure-registries":["192.168.3.49:5000"]
+ 
+ systemctl restart docker
+ 
+ 
+ docker tag jdk1.8 192.168.3.49:5000/jdk1.8
+ 
+ docker push 192.168.3.49:5000/jdk1.8
+ 
+ 
+ # 持续集成与容器管理
+ 
+ 

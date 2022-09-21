@@ -1,0 +1,15 @@
+# name : tcl-department
+#
+# objectClass : top
+# objectClass : organization
+# objectClass : tcl-department
+#
+
+PREFIX: o
+
+REQUIRED ATTRIBUTES
+
+OPTIONAL ATTRIBUTES
+departmentnumber
+o
+cn
