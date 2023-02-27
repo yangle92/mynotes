@@ -16,3 +16,14 @@
 
 [Python 的 Gevent --- 高性能的 Python 并发框架](https://blog.csdn.net/freeking101/article/details/53097420)
 
+[python爬虫-数据解析（xpath）](https://blog.csdn.net/qq_43710889/article/details/115059579)
+
+[Pillow（PIL）入门教程（非常详细）](http://c.biancheng.net/pillow/)
+
+[python-jsonpath模块教程](https://blog.csdn.net/nd211314555/article/details/88426529)
+
+
+
+# Others
+
+[git提交到仓库的文件夹不能点击](https://blog.csdn.net/qq_45718618/article/details/121299431)
