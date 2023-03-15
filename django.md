@@ -163,11 +163,29 @@ ForeginKey  # 表约束
 
 ![image-20230315131921132](images/image-20230315131921132.png)
 
+![image-20230315183239244](images/image-20230315183239244.png)
 
 
 
+![image-20230315183655696](images/image-20230315183655696.png)
+
+模板语法不能加上括号
+
+![image-20230315184240868](images/image-20230315184240868.png)
+
+## 模板继承
+
+### 母版
 
 
+
+![image-20230315172018466](images/image-20230315172018466.png)
+
+### 子版继承
+
+
+
+![image-20230315172103178](images/image-20230315172103178.png)
 
 
 
@@ -195,7 +213,7 @@ git add .
 git commit -m "first commit" 
 
 
- git remote add origin https://github.com/yangle92/Webdjango.git
+ git remote add origin git@github.com:yangle92/Webdjango.git
 
 ```
 
