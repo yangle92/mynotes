@@ -13,7 +13,7 @@ C:\Users\yangle\AppData\Local\Programs\Python\Python39\Scripts\django-admin.exe 
     
 ```
 
-
+这里为空字典 []  即为当前目录
 
 ![image-20230313210150096](images/image-20230313210150096.png)
 
@@ -186,6 +186,161 @@ ForeginKey  # 表约束
 
 
 ![image-20230315172103178](images/image-20230315172103178.png)
+
+
+
+
+
+
+
+
+
+###  用户提交字段校验1
+
+![image-20230320215843760](images/image-20230320215843760.png)
+
+
+
+### 用户提交字段校验2 （钩子方法）
+
+![image-20230320220233520](images/image-20230320220233520.png)
+
+
+
+
+
+
+
+## from 与 modelform
+
+
+
+##  Ajax
+
+![image-20230403144900773](images/image-20230403144900773.png)
+
+
+
+### Get请求
+
+
+
+![image-20230403150001420](images/image-20230403150001420.png)
+
+![image-20230403145914865](images/image-20230403145914865.png)
+
+
+
+![image-20230403150310798](images/image-20230403150310798.png)
+
+
+
+
+
+
+
+### Post请求
+
+
+
+免除csrf token 认证--- dom
+
+
+
+![image-20230403150554415](images/image-20230403150554415.png)
+
+
+
+### jquery
+
+
+
+![image-20230403151148993](images/image-20230403151148993.png)
+
+
+
+
+
+![image-20230403151410541](images/image-20230403151410541.png)
+
+
+
+### ajax 请求返回值
+
+![image-20230403151720642](images/image-20230403151720642.png)
+
+
+
+
+
+![image-20230403151955890](images/image-20230403151955890.png)
+
+
+
+
+
+![image-20230403152456141](images/image-20230403152456141.png)
+
+
+
+### form
+
+![image-20230403152932453](images/image-20230403152932453.png)
+
+
+
+![image-20230403152959642](images/image-20230403152959642.png)
+
+
+
+#### 错误信息整理
+
+![image-20230403161432714](images/image-20230403161432714.png)
+
+
+
+
+
+![image-20230403160951178](images/image-20230403160951178.png)
+
+![image-20230403161137962](images/image-20230403161137962.png)
+
+
+
+### 添加成功后页面刷新
+
+![image-20230403224112470](images/image-20230403224112470.png)
+
+
+
+
+
+
+
+
+
+###  对话框
+
+![image-20230404090849501](images/image-20230404090849501.png)
+
+![image-20230404094342925](images/image-20230404094342925.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
