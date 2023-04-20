@@ -1,0 +1,8 @@
+
+
+容器之间关联
+  docker --link
+  k8s   ----init container
+  
+  env
+  

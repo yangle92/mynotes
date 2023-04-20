@@ -213,6 +213,104 @@ ForeginKey  # 表约束
 
 ## from 与 modelform
 
+ 
+
+![image-20230420204108425](images/image-20230420204108425.png)
+
+
+
+form解决前三个问题
+
+
+
+###  form
+
+
+
+![image-20230420204427515](images/image-20230420204427515.png)
+
+![image-20230420204548684](images/image-20230420204548684.png)
+
+
+
+也可以循环
+
+### modelform
+
+model.py
+
+![image-20230420204753812](images/image-20230420204753812.png)
+
+
+
+view.py
+
+![image-20230420205104247](images/image-20230420205104247.png)
+
+
+
+![image-20230420205359333](images/image-20230420205359333.png)
+
+
+
+
+
+![image-20230420205213128](images/image-20230420205213128.png)
+
+#### 继承bootstrap样式
+
+
+
+![image-20230420205900336](images/image-20230420205900336.png)
+
+![image-20230420210108074](images/image-20230420210108074.png)
+
+
+
+form.save
+
+form.errors
+
+#### 判断错误信息
+
+![image-20230420210958542](images/image-20230420210958542.png)
+
+
+
+
+
+![image-20230420211330501](images/image-20230420211330501.png)
+
+加上instance 就可以显示值
+
+![image-20230420211615352](images/image-20230420211615352.png)
+
+更新数据不是增加
+
+![image-20230420211803116](images/image-20230420211803116.png)
+
+
+
+
+
+#### bootstrap 样式父类
+
+![image-20230420212000243](images/image-20230420212000243.png)
+
+
+
+
+
+![image-20230420212139385](images/image-20230420212139385.png)
+
+![image-20230420212259324](images/image-20230420212259324.png)
+
+
+
+
+
+
+
 
 
 ##  Ajax
@@ -329,27 +427,201 @@ ForeginKey  # 表约束
 
 
 
+## 文件上传
+
+
+
+![image-20230418220226737](images/image-20230418220226737.png)
+
+![image-20230418220504515](images/image-20230418220504515.png)
+
+
+
+这个只能取到文件名
+
+![image-20230418220530420](images/image-20230418220530420.png)
+
+
+
+加上下面这个属性后支持上传文件内容
+
+![image-20230418220750057](images/image-20230418220750057.png)
+
+
+
+request.FILES.get("avatar") 对应前端html中 type=file  name="avatar"
+
+![image-20230418221441276](images/image-20230418221441276.png)
+
+
+
+## 上传excel 和modelform上传
+
+![image-20230420092313359](images/image-20230420092313359.png)
 
 
 
 
 
+<input type='file' name='exc'>
+
+{% csrf_token % }
+
+
+
+上传地址，/dep/multi 然后新增一个路由函数
+
+
+
+读取excel openpyxl
+
+![image-20230420094907932](images/image-20230420094907932.png)
+
+
+
+![image-20230420095630620](images/image-20230420095630620.png)
+
+
+
+### 混合数据（form）
+
+
+
+![image-20230420100633007](images/image-20230420100633007.png)
+
+
+
+![image-20230420100816204](images/image-20230420100816204.png)
 
 
 
 
 
+![image-20230420101218167](images/image-20230420101218167.png)
 
 
 
 
 
+![image-20230420101145281](images/image-20230420101145281.png)
+
+![image-20230420101353609](images/image-20230420101353609.png)
+
+
+
+bootstrap_exclude 部分不用bootstrap样式
+
+![image-20230420101825274](images/image-20230420101825274.png)
+
+
+
+form中的数据保存到数据库中
+
+example
+
+![image-20230420104059555](images/image-20230420104059555.png)
+
+
+
+open(file_path,mode='wb')
 
 
 
 
 
+![image-20230420104752051](images/image-20230420104752051.png)
 
+
+
+dbfilepath filepath
+
+
+
+
+
+### 启用media
+
+![image-20230420130822116](images/image-20230420130822116.png)
+
+
+
+![image-20230420131025260](images/image-20230420131025260.png)
+
+![image-20230420131111368](images/image-20230420131111368.png)
+
+![image-20230420131152959](images/image-20230420131152959.png)
+
+可以在浏览器中直接访问这个地址
+
+
+
+![image-20230420131356998](images/image-20230420131356998.png)
+
+
+
+相对路径
+
+![image-20230420131549649](images/image-20230420131549649.png)
+
+
+
+###  混合案例（基于modelform）
+
+
+
+#### model.py
+
+![image-20230420132235684](images/image-20230420132235684.png)
+
+![image-20230420132302606](images/image-20230420132302606.png)
+
+
+
+![image-20230420132401226](images/image-20230420132401226.png)
+
+
+
+#### modeform
+
+![image-20230420132848119](images/image-20230420132848119.png)
+
+
+
+![image-20230420132952732](images/image-20230420132952732.png)
+
+
+
+直接 form.save 就ok，不用手工读取文件后再save
+
+![image-20230420133134269](images/image-20230420133134269.png)
+
+
+
+
+
+![image-20230420133642322](images/image-20230420133642322.png)
+
+
+
+显示图片
+
+
+
+## 总结
+
+凸头统计地球
+
+
+
+![image-20230420135823296](images/image-20230420135823296.png)
+
+
+
+
+
+![image-20230420135257480](images/image-20230420135257480.png)
+
+![image-20230420135556893](images/image-20230420135556893.png)
 
 
 

@@ -1,0 +1,21 @@
+
+数据：数据枷锁
+应用：sql注入 web
+系统：
+网络：dos  arp欺骗 dns劫持
+
+应急响应
+
+威胁平台  微步 virrustotal vt
+
+nmap 端口扫描
+
+
+威胁情报
+漏洞平台
+勒索病毒解密平台
+
+
+https://zhuanlan.zhihu.com/p/35249719
+
+
