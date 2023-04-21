@@ -626,6 +626,27 @@ dbfilepath filepath
 
 
 
+
+# 应用部署
+
+![image-20230421191345113](images/image-20230421191345113.png)
+
+
+
+![image-20230421191136220](images/image-20230421191136220.png)
+
+nginx 配置文件
+
+![image-20230421192025233](images/image-20230421192025233.png)
+
+
+
+
+
+
+
+
+
 ## refer
 
 https://www.bilibili.com/video/BV1NL41157ph/?p=2&spm_id_from=pageDriver&vd_source=f796b80cb80d8080a1ce1ba33567563e
