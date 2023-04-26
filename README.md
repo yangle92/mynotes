@@ -22,6 +22,10 @@
 
 [python-jsonpath模块教程](https://blog.csdn.net/nd211314555/article/details/88426529)
 
+[python 并发编程](https://github.com/yangle92/mynotes/blob/master/Python%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B.md)
+
+[django](https://github.com/yangle92/mynotes/blob/master/django.md)
+
 
 
 # Others
