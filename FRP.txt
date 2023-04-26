@@ -1,0 +1,62 @@
+
+# 下载frp包
+wget   https://github.com/fatedier/frp/releases/download/v0.41.0/frp_0.41.0_linux_386.tar.gz
+
+
+#服务端配置
+
+[root@jump-server frp]# cat /root/frp/frps.ini 
+[common]
+bind_port = 7000  # frp service 绑定的端口
+
+
+#使用守护程序systemctl，在/lib/systemd/system文件夹下创建frps.service
+[Unit]
+Description=frps service
+After=network.target
+
+[Service]
+TimeoutStartSec=30
+ExecStart=/root/frp/frps -c /root/frp/frps.ini
+ExecStop=/bin/kill $MAINPID
+[Install]
+WantedBy=multi-user.target
+
+
+
+# 加载服务
+systemctl daemon-reload
+systemctl start frps
+systemctl enable frps
+
+
+
+# 客户端配置
+
+[root@host49 frp]# cat frpc.ini 
+[common]
+server_addr = 111.67.197.210  # 云服务器公网IP
+server_port = 7000  # 云服务器frpc 进程端口
+
+[ssh]
+type = tcp
+local_ip = 127.0.0.1 
+local_port = 22  #本地ssh服务
+remote_port = 6000  # 远程端口，表示111.67.197.210：6000 端口 映射到 127.0.0.1：22 
+
+
+[Unit]
+Description=frpc service
+After=network.target
+[Service]
+TimeoutStartSec=30
+ExecStart=/root/frp/frpc -c /root/frp/frpc.ini
+ExecStop=/bin/kill $MAINPID
+
+[Install]
+WantedBy=multi-user.target
+
+# 加载服务
+systemctl daemon-reload
+systemctl start frpc
+systemctl enable frpc

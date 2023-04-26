@@ -1,0 +1,15 @@
+#####Saltstack实践########
+
+
+官方文档  http://docs.saltstack.cn/
+
+配置 yum 仓库
+	yum -y install https://mirrors.aliyun.com/saltstack/yum/redhat/salt-repo-latest-2.el7.noarch.rpm
+	 sed -i "s/repo.saltstack.com/mirrors.aliyun.com\/saltstack/g" /etc/yum.repos.d/salt-latest.repo
+	yum clean all
+	yum makecache
+
+安装Master，并启动服务
+yum -y install salt-master
+systemctl enable salt-master
+systemctl start salt-master

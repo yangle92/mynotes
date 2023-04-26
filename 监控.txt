@@ -1,0 +1,33 @@
+## 监控对象
+	监控对象的理解
+	监控对象的指标
+	确定性能基准线
+
+## 监控范围
+	硬件监控
+	操作系统监控
+	服务监控
+	业务监控
+
+### 硬件监控
+远程控制卡：Dell-IDRAC，HP-ILO，IBM-IMM
+Linux就可以使用IPMI BMC控制器
+
+ipmitool 
+1.硬件支持
+2.操作系统支持  Linux IPMI
+3.管理工具 ipmitool
+
+
+yum install -y OpenIPMI ipmitool
+
+systemctl start ipmi
+
+使用IPMI两种方式1 本地调用 2 远程
+
+硬件监控 1）使用IPMI 2）机房巡检
+
+路由器和交换机：SNMP监控
+
+
+

@@ -1,0 +1,181 @@
+DNS
+
+//安装bind包
+yum -y install bind bind-libs bind-utils
+
+//配置named.conf文件
+/*
+ Sample named.conf BIND DNS server 'named' configuration file
+ for the Red Hat BIND distribution.
+
+ See the BIND Administrator's Reference Manual (ARM) for details about the
+ configuration located in /usr/share/doc/bind-{version}/Bv9ARM.html
+*/
+
+options
+{
+	// Put files that named is allowed to write in the data/ directory:
+	directory 		"/var/named";		// "Working" directory
+	dump-file 		"data/cache_dump.db";
+        statistics-file 	"data/named_stats.txt";
+        memstatistics-file 	"data/named_mem_stats.txt";
+	recursing-file		"data/named.recursing";
+	secroots-file		"data/named.secroots";
+
+
+	/*
+	  Specify listenning interfaces. You can use list of addresses (';' is
+	  delimiter) or keywords "any"/"none"
+	*/
+	listen-on port 53	{ any; };
+	//listen-on port 53	{ 127.0.0.1; };
+
+	//listen-on-v6 port 53	{ any; };
+	//listen-on-v6 port 53	{ ::1; };
+
+	/*
+	  Access restrictions
+
+	  There are two important options:
+	    allow-query { argument; };
+	      - allow queries for authoritative data
+
+	    allow-query-cache { argument; };
+	      - allow queries for non-authoritative data (mostly cached data)
+
+	  You can use address, network address or keywords "any"/"localhost"/"none" as argument
+	  Examples:
+	    allow-query { localhost; 10.0.0.1; 192.168.1.0/8; };
+	    allow-query-cache { ::1; fe80::5c63:a8ff:fe2f:4526; 10.0.0.1; };
+	*/
+
+	allow-query		{ any; };
+	allow-query-cache	{ any; };
+
+	/* Enable/disable recursion - recursion yes/no;
+
+	 - If you are building an AUTHORITATIVE DNS server, do NOT enable recursion.
+	 - If you are building a RECURSIVE (caching) DNS server, you need to enable 
+	   recursion. 
+	 - If your recursive DNS server has a public IP address, you MUST enable access 
+	   control to limit queries to your legitimate users. Failing to do so will
+	   cause your server to become part of large scale DNS amplification 
+	   attacks. Implementing BCP38 within your network would greatly
+	   reduce such attack surface 
+	 */
+	recursion yes;
+	forwarders {
+		192.168.3.1;
+		223.5.5.5;
+		 8.8.8.8; };
+
+	/* DNSSEC related options. See information about keys ("Trusted keys", bellow) */
+
+	/* Enable serving of DNSSEC related data - enable on both authoritative
+ 	   and recursive servers DNSSEC aware servers */
+	dnssec-enable yes;
+
+	/* Enable DNSSEC validation on recursive servers */
+	dnssec-validation yes;
+
+	/* In RHEL-7 we use /run/named instead of default /var/run/named
+	   so we have to configure paths properly. */
+	pid-file "/run/named/named.pid";
+	session-keyfile "/run/named/session.key";
+
+	managed-keys-directory "/var/named/dynamic";
+};
+
+logging 
+{
+/*      If you want to enable debugging, eg. using the 'rndc trace' command,
+ *      named will try to write the 'named.run' file in the $directory (/var/named).
+ *      By default, SELinux policy does not allow named to modify the /var/named directory,
+ *      so put the default debug log file in data/ :
+ */
+        channel default_debug {
+                file "data/named.run";
+                severity dynamic;
+        };
+};
+
+/*
+ Views let a name server answer a DNS query differently depending on who is asking.
+
+ By default, if named.conf contains no "view" clauses, all zones are in the 
+ "default" view, which matches all clients.
+
+ Views are processed sequentially. The first match is used so the last view should
+ match "any" - it's fallback and the most restricted view.
+
+ If named.conf contains any "view" clause, then all zones MUST be in a view.
+*/
+
+
+zone "." IN {
+        type hint;
+        file "named.ca";     // 根DNS服务器的列表 
+};
+
+include "/etc/named.rfc1912.zones";
+#include "/etc/named.root.key";
+
+
+
+directory|dump-file|statistics-file|memstatistics-file
+
+[root@sysadmin ~]# cat /etc/named.conf  | egrep "directory|dump-file|statistics-file|memstatistics-file"
+	directory 	"/var/named";
+	dump-file 	"/var/named/data/cache_dump.db";
+	statistics-file "/var/named/data/named_stats.txt";
+	memstatistics-file "/var/named/data/named_mem_stats.txt";
+	managed-keys-directory "/var/named/dynamic";
+
+
+vi named.rfc1912.zones
+
+// See /usr/share/doc/bind*/sample/ for example named configuration files.
+//
+
+
+// 正向解析
+zone "test.com" IN {
+        type master;
+        file "test.com.zone";
+        allow-update { none; };
+};
+
+// 反向解析
+zone "3.168.192.in-addr.arpa" IN {
+        type master;
+        file "192.168.3.zone";
+        allow-update { none; };
+};	
+
+
+
+named-checkconf /etc/named.conf 
+named-checkzone test.com /var/named/test.com.zone
+named-checkzone 3.168.192.in-addr.arpa /var/named/192.168.3.zone
+
+
+$TTL 600
+@        IN   SOA    dns.test.com.   dnsadmin.test.com. (//SOA字段
+                          2015031288   //版本号    同步一次  +1
+                             1H        //更新时间
+                             2M        // 更新失败，重试更新时间
+                             2D        // 更新失败多长时间后此DNS失效时间
+                             1D        //解析不到请求不予回复时间
+)
+
+100 IN PTR host100.test.com.
+50 IN PTR sysadmin.test.com.
+
+
+host101 IN A 192.168.3.101
+host102 IN A 192.168.3.102
+host200 IN A 192.168.3.200
+host201 IN A 192.168.3.201
+host202 IN A 192.168.3.202
+host203 IN A 192.168.3.203
+ IN A 192.168.3.50
