@@ -155,3 +155,26 @@ property(getx,None,None,"这里是注释")
 ![image-20230501154151379](images/image-20230501154151379.png)
 
 ![image-20230501155023828](images/image-20230501155023828.png)
+
+
+
+## 内置函数补充
+
+classmethod  staticmethod property
+
+callable 是否可以后面加括号执行
+
+super
+
+type
+
+isinstance
+
+issubclass 判断类是否是某个类的子孙类
+
+
+
+
+
+
+
